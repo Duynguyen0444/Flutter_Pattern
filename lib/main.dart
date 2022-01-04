@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_pattern/counter_bloc.dart';
+import 'package:flutter_bloc_pattern/news_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const NewsPage(),
     );
   }
 }
@@ -33,6 +35,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final counterBloc = CounterBloc();
 
   @override
+  void dispose() {
+    counterBloc.disposed();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -43,14 +51,24 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder<Object>(
-                stream: counterBloc.counterStream,
-                initialData: 0,
-                builder: (context, snapshot) {
-                  return Text(
-                    '${snapshot.data}',
-                    style: Theme.of(context).textTheme.headline4,
-                  );
-                }),
+              stream: counterBloc.counterStream,
+              initialData: 0,
+              builder: (context, snapshot) {
+                // if (snapshot.hasData) {
+                //   return Text(
+                //     '${snapshot.data}',
+                //     style: Theme.of(context).textTheme.headline4,
+                //   );
+                // }
+                // if (snapshot.hasError) {
+                //   print(snapshot.error);
+                // }
+                return Text(
+                  '${snapshot.data}',
+                  style: Theme.of(context).textTheme.headline4,
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -58,21 +76,21 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           FloatingActionButton(
             onPressed: () {
-              counterBloc.eventSink.add(CounterAction.INCREASE);
+              counterBloc.eventSink.add(CounterEvent.Increase);
             },
             tooltip: 'Increment',
             child: const Icon(Icons.add),
           ),
           FloatingActionButton(
             onPressed: () {
-              counterBloc.eventSink.add(CounterAction.DECREASE);
+              counterBloc.eventSink.add(CounterEvent.Decrease);
             },
             tooltip: 'Decrement',
             child: const Icon(Icons.remove),
           ),
           FloatingActionButton(
             onPressed: () {
-              counterBloc.eventSink.add(CounterAction.RESET);
+              counterBloc.eventSink.add(CounterEvent.Reset);
             },
             tooltip: 'Reset',
             child: const Icon(Icons.restore),
